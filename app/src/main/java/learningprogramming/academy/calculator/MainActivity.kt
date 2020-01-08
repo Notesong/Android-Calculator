@@ -7,6 +7,9 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
+private const val STATE_PENDING_OPERATION = "PendingOperation"
+private const val STATE_OPERAND_1 = "Operand1"
+
 class MainActivity : AppCompatActivity() {
     // the following declarations explained in lesson 80
     private lateinit var result: EditText
@@ -101,5 +104,19 @@ class MainActivity : AppCompatActivity() {
         }
         result.setText(operand1.toString())
         newNumber.setText("")
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        pendingOperation = savedInstanceState.getString(STATE_PENDING_OPERATION, "")
+        operand1 = savedInstanceState.getDouble(STATE_OPERAND_1)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(STATE_PENDING_OPERATION, pendingOperation)
+        if (operand1 != null) {
+            outState.putDouble(STATE_OPERAND_1, operand1!!)
+        }
     }
 }
