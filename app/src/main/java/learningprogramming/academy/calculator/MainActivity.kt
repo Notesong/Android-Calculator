@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 private const val STATE_PENDING_OPERATION = "PendingOperation"
 private const val STATE_OPERAND_1 = "Operand1"
+private const val STATE_OPERAND_1_STORED = "Operand1_Stored"
 
 class MainActivity : AppCompatActivity() {
     // the following declarations explained in lesson 80
@@ -92,11 +93,11 @@ class MainActivity : AppCompatActivity() {
             }
             when (pendingOperation) {
                 "=" -> operand1 = value
-                "/" -> operand1 = if (value == 0.0) {
-                                    Double.NaN // handle attempt to divide by zero
-                                } else {
-                                    operand1!! / value
-                                }
+                "/" -> operand1 =   if (value == 0.0) {
+                                        Double.NaN // handle attempt to divide by zero
+                                    } else {
+                                        operand1!! / value
+                                    }
                 "*" -> operand1 = operand1!! * value
                 "-" -> operand1 = operand1!! - value
                 "+" -> operand1 = operand1!! + value
@@ -109,7 +110,11 @@ class MainActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         pendingOperation = savedInstanceState.getString(STATE_PENDING_OPERATION, "")
-        operand1 = savedInstanceState.getDouble(STATE_OPERAND_1)
+        operand1 =  if (savedInstanceState.getBoolean(STATE_OPERAND_1_STORED, false)) {
+                        savedInstanceState.getDouble(STATE_OPERAND_1)
+                    } else {
+                        null
+                    }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -117,6 +122,7 @@ class MainActivity : AppCompatActivity() {
         outState.putString(STATE_PENDING_OPERATION, pendingOperation)
         if (operand1 != null) {
             outState.putDouble(STATE_OPERAND_1, operand1!!)
+            outState.putBoolean(STATE_OPERAND_1_STORED, true)
         }
     }
 }
